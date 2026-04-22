@@ -1,41 +1,35 @@
-// Importa o auth do seu outro arquivo
 import { auth } from "./firebaseConfig.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Importa as funções de autenticação diretamente da biblioteca
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+const loginForm = document.querySelector('form');
 
-// --- Elementos do HTML ---
-const authSection = document.getElementById('auth-section');
-const btnOpenAuth = document.getElementById('open-auth');
-const btnAction = document.getElementById('btn-action');
-const emailField = document.getElementById('email');
-const passwordField = document.getElementById('password');
+loginForm.onsubmit = async (e) => {
+    e.preventDefault();
 
-// --- Função de Cadastro/Login ---
-btnAction.onclick = async () => {
-    const email = emailField.value;
-    const password = passwordField.value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const isAdmin = document.getElementById('perfil-admin').checked;
 
     try {
-        // Tenta fazer login, se quiser cadastrar use createUserWithEmailAndPassword
+        // Tenta apenas o LOGIN. Se não existir, vai para o catch (erro)
         await signInWithEmailAndPassword(auth, email, password);
-        alert("Logado com sucesso!");
+        
+        if (isAdmin) {
+            alert("Bem-vindo, Administrador!");
+            window.location.href = "admin.html";
+        } else {
+            alert("Login realizado! Boas compras.");
+            window.location.href = "index.html";
+        }
+
     } catch (error) {
-        alert("Erro: " + error.message);
+        console.error("Erro no login:", error.code);
+        
+        // Tratamento de erros específicos de login
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            alert("E-mail ou senha incorretos. Verifique seus dados ou cadastre-se.");
+        } else {
+            alert("Erro ao tentar entrar: " + error.message);
+        }
     }
 };
-
-// --- Monitor de Usuário ---
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        btnOpenAuth.innerText = "Sair";
-        console.log("Logado como:", user.email);
-    } else {
-        btnOpenAuth.innerText = "Minha Conta";
-    }
-});

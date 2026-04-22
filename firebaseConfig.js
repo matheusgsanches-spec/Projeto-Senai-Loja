@@ -16,3 +16,9 @@ const app = initializeApp(firebaseConfig);
 
 // Exporta o auth para ser usado no script.js
 export const auth = getAuth(app);
+
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+export const db = getFirestore(app);
+export const storage = getStorage(app);
