@@ -120,7 +120,7 @@ p {
 }
 
 
-/* CSS DA TELA DE VENDAS - USUARIO*/
+/* CSS DA TELA DE VENDAS */
 
 :root {
     --primary: #6366f1;
@@ -267,88 +267,3 @@ body {
 }
 
 #toggle-auth span { color: var(--primary); font-weight: bold; }
-
-/* aCSS DA TELA DE VENDAS - ADMIN */
-
-.admin-form-section {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 40px;
-}
-
-.form-row {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-.form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #444;
-}
-
-.form-group input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-}
-
-/* Regra principal: 4 produtos por linha */
-.admin-product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Cria 4 colunas iguais */
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.admin-item-card {
-    background: #fff;
-    border: 1px solid #eee;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.admin-item-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.admin-item-card h4 { margin: 10px 0 5px; }
-.stock-badge {
-    background: #e1f5fe;
-    color: #0288d1;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-}
-
-.btn-delete {
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.separator {
-    margin: 40px 0;
-    border: none;
-    border-top: 1px solid #ddd;
-}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Gerenciar Inventário</h2>
+        <form id="form-cadastrar-produto" style="margin-bottom: 40px; background: #fff; padding: 20px; border-radius: 10px;">
+            <input type="text" id="nome-prod" placeholder="Nome do Produto" required>
+            <input type="number" id="preco-prod" placeholder="Preço" step="0.01" required>
+            <input type="file" id="imagem-prod" accept="image/*" required>
+            <button type="submit" class="main-button">Cadastrar Produto</button>
+        </form>
+
+        <div class="product-grid">
+            </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, storage } from "./firebaseConfig.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        onAuthStateChanged(auth, (user) => { if (!user) window.location.href = "telaLogin.html"; });
+
+        const form = document.getElementById('form-cadastrar-produto');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const arquivo = document.getElementById('imagem-prod').files[0];
+            const storageRef = ref(storage, `produtos/${Date.now()}_${arquivo.name}`);
+            
+            await uploadBytes(storageRef, arquivo);
+            const url = await getDownloadURL(storageRef);
+
+            await addDoc(collection(db, "produtos"), {
+                nome: document.getElementById('nome-prod').value,
+                preco: parseFloat(document.getElementById('preco-prod').value),
+                imagem: url,
+                storagePath: storageRef.fullPath 
+            });
+            form.reset();
+        };
+
+        onSnapshot(collection(db, "produtos"), (snapshot) => {
+            const grid = document.querySelector('.product-grid');
+            grid.innerHTML = "";
+            snapshot.forEach((res) => {
+                const p = res.data();
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <h3>${p.nome}</h3>
+                        <button onclick="remover('${res.id}', '${p.storagePath}')" style="background:red; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer;">Remover Item</button>
+                    </div>`;
+            });
+        });
+
+        window.remover = async (id, path) => {
+            if(confirm("Excluir?")) {
+                await deleteDoc(doc(db, "produtos", id));
+                await deleteObject(ref(storage, path));
+            }
+        }
+    </script>
+</body>
+</html>
