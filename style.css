@@ -1,0 +1,120 @@
+/* CSS DA TELA DE LOGIN */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 1. Centralização Total na Tela */
+.background-screen {
+  width: 100vw;
+  height: 100vh;
+  background-color: #e9ecef; /* Um cinza claro para destacar o box branco */
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+}
+
+/* 2. O Container Branco */
+.login-container {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 400px; /* Largura máxima do card */
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+p {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 30px;
+}
+
+/* 3. Seletor Admin/User Estilizado */
+.selector-wrapper {
+  display: flex;
+  position: relative;
+  background: #f1f3f5;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  padding: 5px;
+}
+
+.selector-wrapper input {
+  display: none;
+}
+
+.selector-wrapper label {
+  flex: 1;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.slider {
+  position: absolute;
+  width: calc(50% - 5px);
+  height: calc(100% - 10px);
+  background: #007bff;
+  border-radius: 8px;
+  transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+#perfil-user:checked ~ .slider {
+  transform: translateX(0);
+}
+#perfil-admin:checked ~ .slider {
+  transform: translateX(100%);
+}
+
+#perfil-user:checked ~ label[for="perfil-user"],
+#perfil-admin:checked ~ label[for="perfil-admin"] {
+  color: #fff;
+}
+
+/* 4. Inputs e Botão */
+.field {
+  margin-bottom: 15px;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
+
+.main-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.main-button:hover {
+  background-color: #0056b3;
+}
+
+.extra-links {
+  margin-top: 20px;
+  font-size: 0.8rem;
+}
+.extra-links a {
+  color: #007bff;
+  text-decoration: none;
+}

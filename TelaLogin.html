@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | App de Vendas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="background-screen">
+        
+        <div class="login-container">
+            <h2>GERS STORE</h2>
+            <p>Acesse seu perfil perfil</p>
+
+            <form>
+                <div class="selector-wrapper">
+                    <input type="radio" name="perfil" id="perfil-user" checked>
+                    <label for="perfil-user">Cliente</label>
+
+                    <input type="radio" name="perfil" id="perfil-admin">
+                    <label for="perfil-admin">Admin</label>
+                    
+                    <div class="slider"></div>
+                </div>
+
+                <div class="field">
+                    <input type="email" placeholder="E-mail" required>
+                </div>
+
+                <div class="field">
+                    <input type="password" placeholder="Senha" required>
+                </div>
+
+                <button type="submit" class="main-button">Entrar</button>
+            </form>
+
+            <div class="extra-links">
+                <a href="#">Recuperar senha</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
