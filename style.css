@@ -1,212 +1,256 @@
-/* RESET E VARIÁVEIS */
+/* 1. RESET & MODERN SETUP */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 :root {
-  --primary: #064e3b;
-  --primary-light: #10b981;
-  --dark: #022c22;
-  --light: #f0fdf4;
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --primary-soft: rgba(16, 185, 129, 0.1);
+  --dark: #1e293b;
+  --text-muted: #64748b;
+  --light: #f8fafc;
   --white: #ffffff;
-  --danger: #991b1b;
+  --danger: #ef4444;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   background: var(--light);
   color: var(--dark);
-  line-height: 1.6;
+  line-height: 1.5;
+  overflow-x: hidden;
 }
 
-/* NAVBAR RESPONSIVA */
+/* 2. NAVBAR REFINADA */
 .navbar {
-  background: #fff;
-  padding: 12px 5%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  /* Efeito vidro moderno */
+  padding: 0.75rem 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* 🔥 permite quebrar linha */
-  gap: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .logo {
-  font-size: clamp(1rem, 2.5vw, 1.3rem); /* 🔥 responsivo */
-  font-weight: bold;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--dark);
 }
 
-.logo span { color: var(--primary); }
+.logo span {
+  color: var(--primary-dark);
+}
 
-/* CONTAINER */
+/* 3. GRID RESPONSIVO DINÂMICO */
 .container {
-  padding: 15px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 5%;
 }
 
-/* GRID MAIS INTELIGENTE 🔥 */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
+  /* Cria colunas automáticas que nunca ficam menores que 160px e preenchem o espaço */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
-/* CARD */
+/* 4. CARDS COM ASPECT RATIO */
 .card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 10px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: var(--transition);
+  height: 100%;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
 .card img {
   width: 100%;
-  height: clamp(120px, 25vw, 180px); /* 🔥 altura flexível */
+  aspect-ratio: 1 / 1;
+  /* Mantém a imagem quadrada independente do arquivo */
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: calc(var(--radius) - 4px);
+  margin-bottom: 12px;
 }
 
 .card h3 {
-  font-size: clamp(13px, 2vw, 15px);
-  margin: 8px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Limita texto a 2 linhas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card p {
-  font-size: clamp(12px, 2vw, 14px);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: auto;
+  /* Empurra o preço para baixo */
+  padding: 8px 0;
 }
 
-/* BOTÕES */
+/* 5. BOTÕES PROFISSIONAIS */
 .btn {
+  width: 100%;
   background: var(--primary);
   color: white;
-  padding: 10px;
+  padding: 10px 16px;
   border-radius: 8px;
   border: none;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
-  font-size: clamp(13px, 2vw, 15px);
-  transition: 0.2s;
+  transition: var(--transition);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn:hover {
-  background: var(--primary-light);
+  background: var(--primary-dark);
+  box-shadow: 0 4px 12px var(--primary-soft);
 }
 
-.btn.danger {
-  background: var(--danger);
+.btn:active {
+  transform: scale(0.98);
 }
 
-/* CARRINHO */
-#carrinho div {
-  background: white;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  display: flex;
-  flex-wrap: wrap; /* 🔥 evita quebrar layout */
-  gap: 10px;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #ddd;
-}
-
-/* LOGIN */
+/* 6. LOGIN (UI PREMIUM) */
 .background-screen {
   min-height: 100vh;
-  background: radial-gradient(circle at top left, #065f46, #022c22);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
+  background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+  display: grid;
+  place-items: center;
+  padding: 20px;
 }
 
 .login-container {
-  background: rgba(255, 255, 255, 0.98);
-  padding: 25px 20px;
-  border-radius: 20px;
+  background: var(--white);
+  padding: 40px 30px;
+  border-radius: 24px;
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  max-width: 400px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* SELECTOR */
+/* 7. SELECTOR ESTILO IOS */
 .selector-wrapper {
   display: flex;
   background: #f1f5f9;
   padding: 4px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
   position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
-
-.selector-wrapper input { display: none; }
 
 .selector-wrapper label {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.85rem;
   font-weight: 600;
   z-index: 2;
   text-align: center;
+  color: var(--text-muted);
+  transition: var(--transition);
 }
 
-.selector-wrapper input:checked + label {
-  color: white;
+.selector-wrapper input:checked+label {
+  color: var(--white);
 }
 
 .slider {
   position: absolute;
   height: calc(100% - 8px);
   width: calc(50% - 4px);
-  background: var(--primary);
-  border-radius: 7px;
-  transition: 0.3s;
+  background: var(--primary-dark);
+  border-radius: 9px;
+  transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   z-index: 1;
 }
 
-#perfil-admin:checked ~ .slider {
-  transform: translateX(100%);
-}
-
-/* INPUTS */
+/* 8. FORMULÁRIOS */
 .field input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
   border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 14px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  transition: var(--transition);
 }
 
-/* MODAL */
-#modal-editar > div {
-  width: 95% !important;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
+.field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px var(--primary-soft);
 }
 
-/* 🔥 AJUSTES EXTRAS MOBILE */
-@media (max-width: 400px) {
-  .card img {
-    height: 100px;
+/* 9. MODAL & CARRINHO REFINADO */
+#carrinho div {
+  background: var(--white);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-sm);
+}
+
+/* MEDIA QUERIES PARA CELULARES PEQUENOS */
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 colunas fixas em telas pequenas para aproveitar espaço */
+    gap: 10px;
   }
 
-  .btn {
+  .container {
+    padding: 1rem 3%;
+  }
+
+  .card {
     padding: 8px;
+  }
+
+  .card h3 {
+    font-size: 0.85rem;
+  }
+
+  .login-container {
+    padding: 30px 20px;
   }
 }
