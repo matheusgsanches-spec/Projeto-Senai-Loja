@@ -1,0 +1,17 @@
+{
+  "name": "GERS STORE Official",
+  "short_name": "GersStore",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#022c22",
+  "theme_color": "#064e3b",
+  "description": "A melhor loja de variedades da GERS STORE",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3081/3081840.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

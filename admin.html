@@ -1,73 +1,83 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Painel Admin</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0d6efd">
 </head>
+
 <body>
 
-<header class="navbar">
-    <h2>Painel Admin</h2>
-    <button id="btn-sair" class="btn danger">Sair</button>
-</header>
+    <header class="navbar">
+        <h2>Painel Admin</h2>
+        <button id="btn-sair" class="btn danger">Sair</button>
+    </header>
 
-<main class="container">
-    <div class="card form-card">
-        <h3>Cadastrar Produto</h3>
-        <form id="form-cadastrar-produto">
-            <input type="text" id="nome-prod" placeholder="Nome do produto" required>
-            <input type="number" id="preco-prod" placeholder="Preço" required>
-            <input type="number" id="qtd-prod" placeholder="Quantidade" required>
-            <input type="text" id="imagem-prod" placeholder="URL da imagem" required>
-            <button id="btn-enviar" class="btn">Cadastrar Produto</button>
-        </form>
-    </div>
-
-    <h2 style="margin-top:30px;">Gerir Produtos</h2>
-    <div id="lista-produtos" class="product-grid"></div>
-
-    <div id="modal-editar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
-        <div class="card" style="width: 350px; background: white; padding: 20px;">
-            <h3>Editar Produto</h3>
-            <form id="form-editar-produto">
-                <input type="hidden" id="edit-id">
-                <input type="text" id="edit-nome" placeholder="Nome" required style="width:100%; margin-bottom:10px;">
-                <input type="number" id="edit-preco" placeholder="Preço" required style="width:100%; margin-bottom:10px;">
-                <input type="number" id="edit-qtd" placeholder="Quantidade" required style="width:100%; margin-bottom:10px;">
-                <input type="text" id="edit-imagem" placeholder="URL Imagem" required style="width:100%; margin-bottom:10px;">
-                <button type="submit" class="btn">Salvar</button>
-                <button type="button" class="btn danger" onclick="document.getElementById('modal-editar').style.display='none'">Cancelar</button>
+    <main class="container">
+        <div class="card form-card">
+            <h3>Cadastrar Produto</h3>
+            <form id="form-cadastrar-produto">
+                <input type="text" id="nome-prod" placeholder="Nome do produto" required>
+                <input type="number" id="preco-prod" placeholder="Preço" required>
+                <input type="number" id="qtd-prod" placeholder="Quantidade" required>
+                <input type="text" id="imagem-prod" placeholder="URL da imagem" required>
+                <button id="btn-enviar" class="btn">Cadastrar Produto</button>
             </form>
         </div>
-    </div>
-</main>
 
-<script type="module">
-    import { auth, rtdb } from "./firebaseConfig.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        <h2 style="margin-top:30px;">Gerir Produtos</h2>
+        <div id="lista-produtos" class="product-grid"></div>
 
-    onAuthStateChanged(auth, async (user) => {
-        if (!user) { window.location.href = "login.html"; return; }
-        const snap = await get(ref(rtdb, "usuarios/" + user.uid));
-        if (!snap.exists() || snap.val().tipo !== "admin") {
-            alert("Acesso negado!");
-            window.location.href = "index.html";
-        } else { iniciarSistema(); }
-    });
+        <div id="modal-editar"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+            <div class="card" style="width: 350px; background: white; padding: 20px;">
+                <h3>Editar Produto</h3>
+                <form id="form-editar-produto">
+                    <input type="hidden" id="edit-id">
+                    <input type="text" id="edit-nome" placeholder="Nome" required
+                        style="width:100%; margin-bottom:10px;">
+                    <input type="number" id="edit-preco" placeholder="Preço" required
+                        style="width:100%; margin-bottom:10px;">
+                    <input type="number" id="edit-qtd" placeholder="Quantidade" required
+                        style="width:100%; margin-bottom:10px;">
+                    <input type="text" id="edit-imagem" placeholder="URL Imagem" required
+                        style="width:100%; margin-bottom:10px;">
+                    <button type="submit" class="btn">Salvar</button>
+                    <button type="button" class="btn danger"
+                        onclick="document.getElementById('modal-editar').style.display='none'">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </main>
 
-    function iniciarSistema() {
-        const lista = document.getElementById("lista-produtos");
-        const modal = document.getElementById("modal-editar");
+    <script type="module">
+        import { auth, rtdb } from "./firebaseConfig.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // LISTAGEM COM EDITAR
-        onValue(ref(rtdb, "produtos"), (snapshot) => {
-            lista.innerHTML = "";
-            snapshot.forEach((item) => {
-                const p = item.val();
-                const id = item.key;
-                lista.innerHTML += `
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "login.html"; return; }
+            const snap = await get(ref(rtdb, "usuarios/" + user.uid));
+            if (!snap.exists() || snap.val().tipo !== "admin") {
+                alert("Acesso negado!");
+                window.location.href = "index.html";
+            } else { iniciarSistema(); }
+        });
+
+        function iniciarSistema() {
+            const lista = document.getElementById("lista-produtos");
+            const modal = document.getElementById("modal-editar");
+
+            // LISTAGEM COM EDITAR
+            onValue(ref(rtdb, "produtos"), (snapshot) => {
+                lista.innerHTML = "";
+                snapshot.forEach((item) => {
+                    const p = item.val();
+                    const id = item.key;
+                    lista.innerHTML += `
                     <div class="card">
                         <img src="${p.imagem}">
                         <h3>${p.nome}</h3>
@@ -76,45 +86,46 @@
                         <button class="btn" onclick='abrirEditor("${id}", ${JSON.stringify(p).replace(/'/g, "&apos;")})'>Editar</button>
                         <button class="btn danger" onclick="deletar('${id}')">Excluir</button>
                     </div>`;
+                });
             });
-        });
 
-        window.abrirEditor = (id, p) => {
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-nome').value = p.nome;
-            document.getElementById('edit-preco').value = p.preco;
-            document.getElementById('edit-qtd').value = p.quantidade;
-            document.getElementById('edit-imagem').value = p.imagem;
-            modal.style.display = "flex";
-        };
+            window.abrirEditor = (id, p) => {
+                document.getElementById('edit-id').value = id;
+                document.getElementById('edit-nome').value = p.nome;
+                document.getElementById('edit-preco').value = p.preco;
+                document.getElementById('edit-qtd').value = p.quantidade;
+                document.getElementById('edit-imagem').value = p.imagem;
+                modal.style.display = "flex";
+            };
 
-        document.getElementById('form-editar-produto').onsubmit = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('edit-id').value;
-            await update(ref(rtdb, 'produtos/' + id), {
-                nome: document.getElementById('edit-nome').value,
-                preco: parseFloat(document.getElementById('edit-preco').value),
-                quantidade: parseInt(document.getElementById('edit-qtd').value),
-                imagem: document.getElementById('edit-imagem').value
-            });
-            modal.style.display = "none";
-            alert("Atualizado!");
-        };
+            document.getElementById('form-editar-produto').onsubmit = async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('edit-id').value;
+                await update(ref(rtdb, 'produtos/' + id), {
+                    nome: document.getElementById('edit-nome').value,
+                    preco: parseFloat(document.getElementById('edit-preco').value),
+                    quantidade: parseInt(document.getElementById('edit-qtd').value),
+                    imagem: document.getElementById('edit-imagem').value
+                });
+                modal.style.display = "none";
+                alert("Atualizado!");
+            };
 
-        document.getElementById('form-cadastrar-produto').onsubmit = async (e) => {
-            e.preventDefault();
-            await push(ref(rtdb, 'produtos'), {
-                nome: document.getElementById('nome-prod').value,
-                preco: parseFloat(document.getElementById('preco-prod').value),
-                quantidade: parseInt(document.getElementById('qtd-prod').value),
-                imagem: document.getElementById('imagem-prod').value
-            });
-            e.target.reset();
-        };
+            document.getElementById('form-cadastrar-produto').onsubmit = async (e) => {
+                e.preventDefault();
+                await push(ref(rtdb, 'produtos'), {
+                    nome: document.getElementById('nome-prod').value,
+                    preco: parseFloat(document.getElementById('preco-prod').value),
+                    quantidade: parseInt(document.getElementById('qtd-prod').value),
+                    imagem: document.getElementById('imagem-prod').value
+                });
+                e.target.reset();
+            };
 
-        window.deletar = (id) => confirm("Excluir?") && remove(ref(rtdb, "produtos/" + id));
-        document.getElementById('btn-sair').onclick = () => signOut(auth);
-    }
-</script>
+            window.deletar = (id) => confirm("Excluir?") && remove(ref(rtdb, "produtos/" + id));
+            document.getElementById('btn-sair').onclick = () => signOut(auth);
+        }
+    </script>
 </body>
+
 </html>
