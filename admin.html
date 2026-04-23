@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <h2>Painel Admin</h2>
+    <button id="btn-sair" class="btn danger">Sair</button>
+</header>
+
+<main class="container">
+
+    <!-- FORM -->
+    <div class="card form-card">
+        <h3>Cadastrar Produto</h3>
+
+        <form id="form-cadastrar-produto">
+            <input type="text" id="nome-prod" placeholder="Nome do produto" required>
+            <input type="number" id="preco-prod" placeholder="Preço" required>
+            <input type="number" id="qtd-prod" placeholder="Quantidade" required>
+
+            <!-- 🔥 AGORA É URL -->
+            <input type="text" id="imagem-prod" placeholder="URL da imagem" required>
+
+            <button id="btn-enviar" class="btn">Cadastrar Produto</button>
+        </form>
+    </div>
+
+    <!-- LISTA -->
+    <h2 style="margin-top:30px;">Produtos</h2>
+    <div id="lista-produtos" class="product-grid"></div>
+
+</main>
+
+<script type="module">
+    import { auth, rtdb } from "./firebaseConfig.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { ref, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const snapshot = await get(ref(rtdb, "usuarios/" + user.uid));
+
+        if (!snapshot.exists() || snapshot.val().tipo !== "admin") {
+            alert("Acesso negado!");
+            window.location.href = "index.html";
+            return;
+        }
+
+        iniciarSistema();
+    });
+
+    function iniciarSistema() {
+
+        const form = document.getElementById('form-cadastrar-produto');
+        const btnEnviar = document.getElementById('btn-enviar');
+        const lista = document.getElementById("lista-produtos");
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome-prod').value;
+            const preco = parseFloat(document.getElementById('preco-prod').value);
+            const qtd = parseInt(document.getElementById('qtd-prod').value);
+            const imagem = document.getElementById('imagem-prod').value;
+
+            try {
+                btnEnviar.disabled = true;
+                btnEnviar.innerText = "Salvando...";
+
+                await push(ref(rtdb, 'produtos'), {
+                    nome,
+                    preco,
+                    quantidade: qtd,
+                    imagem
+                });
+
+                alert("Produto cadastrado!");
+                form.reset();
+
+            } catch (error) {
+                alert("Erro: " + error.message);
+            } finally {
+                btnEnviar.disabled = false;
+                btnEnviar.innerText = "Cadastrar Produto";
+            }
+        };
+
+        onValue(ref(rtdb, "produtos"), (snapshot) => {
+            lista.innerHTML = "";
+
+            snapshot.forEach((item) => {
+                const produto = item.val();
+                const id = item.key;
+
+                lista.innerHTML += `
+                    <div class="card">
+                        <img src="${produto.imagem}">
+                        <h3>${produto.nome}</h3>
+                        <p>R$ ${produto.preco}</p>
+                        <p>Estoque: ${produto.quantidade}</p>
+                        <button class="btn danger" onclick="deletar('${id}')">
+                            Excluir
+                        </button>
+                    </div>
+                `;
+            });
+        });
+
+        window.deletar = async (id) => {
+            if (!confirm("Deseja excluir?")) return;
+            await remove(ref(rtdb, "produtos/" + id));
+        };
+
+        document.getElementById('btn-sair').onclick = () => signOut(auth);
+    }
+</script>
+
+</body>
+</html>

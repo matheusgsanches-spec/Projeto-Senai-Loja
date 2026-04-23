@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro | GERS STORE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-screen">
+        <div class="login-container">
+            <h2>Criar Conta</h2>
+            <p>Cadastre-se para começar a comprar</p>
+            <form id="form-cadastro">
+                <div class="field">
+                    <input type="email" id="email-cad" placeholder="Seu melhor e-mail" required>
+                </div>
+                <div class="field">
+                    <input type="password" id="pass-cad" placeholder="Crie uma senha (min. 6 dígitos)" required>
+                </div>
+                <button type="submit" class="main-button">Finalizar Cadastro</button>
+            </form>
+            <div class="extra-links">
+                <a href="login.html">Já tenho conta? Entrar</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, rtdb } from "./firebaseConfig.js";
+        import { ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        document.getElementById('form-cadastro').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email-cad').value;
+            const pass = document.getElementById('pass-cad').value;
+
+            try {
+                // 🔐 cria no Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                console.log("Usuário criado:", user.uid);
+
+                // 🔥 salva no Realtime Database
+                await set(ref(rtdb, "usuarios/" + user.uid), {
+                    email: email,
+                    tipo: "cliente"
+                });
+
+                console.log("Salvo no database!");
+
+                alert("Conta criada com sucesso!");
+                window.location.href = "login.html";
+
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao cadastrar: " + error.message);
+            }
+        };
+    </script>
+</body>
+
+</html>

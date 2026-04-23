@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>GERS STORE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">GERS<span>STORE</span></div>
+    <a href="login.html" class="btn">Login</a>
+</header>
+
+<main class="container">
+
+    <h1>Produtos</h1>
+    <div id="vitrine-produtos" class="product-grid"></div>
+
+    <h2>🛒 Carrinho</h2>
+    <div id="carrinho"></div>
+    <h3 id="total">Total: R$ 0.00</h3>
+
+    <!-- 🔥 BOTÃO WHATS -->
+    <button class="btn" onclick="finalizarCompra()">
+        Finalizar compra no WhatsApp
+    </button>
+
+</main>
+
+<script type="module">
+    import { rtdb } from "./firebaseConfig.js";
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const vitrine = document.getElementById("vitrine-produtos");
+    const carrinhoDiv = document.getElementById("carrinho");
+    const totalDiv = document.getElementById("total");
+
+    let carrinho = [];
+
+    // 📦 LISTAR PRODUTOS
+    onValue(ref(rtdb, "produtos"), (snapshot) => {
+        vitrine.innerHTML = "";
+
+        snapshot.forEach((item) => {
+            const produto = item.val();
+
+            vitrine.innerHTML += `
+                <div class="card">
+                    <img src="${produto.imagem}">
+                    <h3>${produto.nome}</h3>
+                    <p>R$ ${produto.preco}</p>
+                    <button class="btn" onclick='adicionarCarrinho(${JSON.stringify(produto)})'>
+                        Comprar
+                    </button>
+                </div>
+            `;
+        });
+    });
+
+    // 🛒 ADICIONAR
+    window.adicionarCarrinho = (produto) => {
+        carrinho.push(produto);
+        atualizarCarrinho();
+    };
+
+    // 🔄 ATUALIZAR
+    function atualizarCarrinho() {
+        carrinhoDiv.innerHTML = "";
+        let total = 0;
+
+        carrinho.forEach((item, index) => {
+            total += item.preco;
+
+            carrinhoDiv.innerHTML += `
+                <div>
+                    ${item.nome} - R$ ${item.preco}
+                    <button onclick="removerItem(${index})">❌</button>
+                </div>
+            `;
+        });
+
+        totalDiv.innerText = "Total: R$ " + total.toFixed(2);
+    }
+
+    // ❌ REMOVER
+    window.removerItem = (index) => {
+        carrinho.splice(index, 1);
+        atualizarCarrinho();
+    };
+
+    // 📲 FINALIZAR NO WHATS
+    window.finalizarCompra = () => {
+        if (carrinho.length === 0) {
+            alert("Carrinho vazio!");
+            return;
+        }
+
+        let mensagem = "🛒 *Pedido GERS STORE*%0A%0A";
+        let total = 0;
+
+        carrinho.forEach((item) => {
+            mensagem += `• ${item.nome} - R$ ${item.preco}%0A`;
+            total += item.preco;
+        });
+
+        mensagem += `%0A💰 Total: R$ ${total.toFixed(2)}`;
+
+        // 🔥 COLOQUE SEU NÚMERO AQUI
+        const numero = "5554981152299";
+
+        const url = `https://wa.me/${numero}?text=${mensagem}`;
+
+        window.open(url, "_blank");
+    };
+</script>
+
+</body>
+</html>
