@@ -15,7 +15,6 @@
     </header>
 
     <main class="container">
-
         <h1>Produtos</h1>
         <div id="vitrine-produtos" class="product-grid"></div>
 
@@ -23,15 +22,12 @@
         <div id="carrinho"></div>
         <h3 id="total">Total: R$ 0.00</h3>
 
-        <!-- 🔥 BOTÃO WHATS -->
         <button class="btn" onclick="finalizarCompra()">
             Finalizar compra no WhatsApp
         </button>
-
     </main>
 
     <script type="module">
-        // Importações corrigidas: onValue deve vir de database.js
         import { rtdb } from "./firebaseConfig.js";
         import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -41,28 +37,20 @@
 
         let carrinho = [];
 
-        // 📦 LISTAR PRODUTOS (Lendo do rtdb)
+        // 📦 LISTAR PRODUTOS
         onValue(ref(rtdb, "produtos"), (snapshot) => {
             vitrine.innerHTML = "";
-
-            if (!snapshot.exists()) {
-                vitrine.innerHTML = "<p>Nenhum produto disponível no momento.</p>";
-                return;
-            }
-
             snapshot.forEach((item) => {
                 const produto = item.val();
-                const id = item.key; // Pegamos a chave única do Firebase
-
-                // Criamos um objeto completo para passar para o carrinho
+                const id = item.key;
                 const prodData = { ...produto, id: id };
 
                 vitrine.innerHTML += `
                 <div class="card">
-                    <img src="${produto.imagem}" alt="${produto.nome}">
+                    <img src="${produto.imagem}">
                     <h3>${produto.nome}</h3>
                     <p>R$ ${produto.preco.toFixed(2)}</p>
-                    <p style="font-size: 0.8rem; color: #666;">Estoque: <b>${produto.quantidade}</b></p>
+                    <p style="font-size: 13px; color: #666;">Disponível: <b>${produto.quantidade}</b></p>
                     <button class="btn" onclick='adicionarCarrinho(${JSON.stringify(prodData)})'>
                         Comprar
                     </button>
@@ -71,13 +59,12 @@
             });
         });
 
-        // 🛒 ADICIONAR COM LIMITE DE ESTOQUE
+        // 🛒 ADICIONAR COM LIMITE DE STOCK
         window.adicionarCarrinho = (produto) => {
-            // Conta quantos deste item já estão no carrinho
             const unidadesNoCarrinho = carrinho.filter(item => item.id === produto.id).length;
 
             if (unidadesNoCarrinho >= produto.quantidade) {
-                alert(`Limite atingido! Temos apenas ${produto.quantidade} unidades de "${produto.nome}" em estoque.`);
+                alert(`Desculpe! Temos apenas ${produto.quantidade} unidades de "${produto.nome}" em stock.`);
                 return;
             }
 
@@ -85,14 +72,11 @@
             atualizarCarrinho();
         };
 
-        // 🔄 ATUALIZAR CARRINHO
         function atualizarCarrinho() {
             carrinhoDiv.innerHTML = "";
             let total = 0;
-
             carrinho.forEach((item, index) => {
-                total += parseFloat(item.preco);
-
+                total += item.preco;
                 carrinhoDiv.innerHTML += `
                 <div>
                     ${item.nome} - R$ ${item.preco.toFixed(2)}
@@ -100,35 +84,24 @@
                 </div>
             `;
             });
-
             totalDiv.innerText = "Total: R$ " + total.toFixed(2);
         }
 
-        // ❌ REMOVER DO CARRINHO
         window.removerItem = (index) => {
             carrinho.splice(index, 1);
             atualizarCarrinho();
         };
 
-        // 📲 FINALIZAR NO WHATSAPP
         window.finalizarCompra = () => {
-            if (carrinho.length === 0) {
-                alert("Seu carrinho está vazio!");
-                return;
-            }
-
-            let mensagem = "🛒 *Novo Pedido - GERS STORE*%0A%0A";
+            if (carrinho.length === 0) return alert("Carrinho vazio!");
+            let mensagem = "🛒 *Pedido GERS STORE*%0A%0A";
             let total = 0;
-
-            carrinho.forEach((item) => {
+            carrinho.forEach(item => {
                 mensagem += `• ${item.nome} - R$ ${item.preco.toFixed(2)}%0A`;
-                total += parseFloat(item.preco);
+                total += item.preco;
             });
-
-            mensagem += `%0A💰 *Total: R$ ${total.toFixed(2)}*`;
-
-            const numero = "5554981152299"; // Seu número
-            window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
+            mensagem += `%0A💰 Total: R$ ${total.toFixed(2)}`;
+            window.open(`https://wa.me/5554981152299?text=${mensagem}`, "_blank");
         };
     </script>
 </body>
