@@ -3,10 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Admin</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0d6efd">
+    <style>
+        /* Estilos específicos para o Admin ser responsivo */
+        .form-card form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-card input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px; /* Evita zoom automático no iOS */
+        }
+
+        /* Ajuste do Modal para telas pequenas */
+        #modal-editar > div {
+            width: 90% !important; /* Ocupa quase toda a largura no celular */
+            max-width: 400px;
+            border-radius: 15px;
+        }
+
+        /* Melhoria na Navbar para telas pequenas */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+            .navbar h2 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -24,7 +58,7 @@
                 <input type="number" id="preco-prod" placeholder="Preço" required>
                 <input type="number" id="qtd-prod" placeholder="Quantidade" required>
                 <input type="text" id="imagem-prod" placeholder="URL da imagem" required>
-                <button id="btn-enviar" class="btn">Cadastrar Produto</button>
+                <button id="btn-enviar" class="btn" style="width: 100%;">Cadastrar Produto</button>
             </form>
         </div>
 
@@ -32,22 +66,25 @@
         <div id="lista-produtos" class="product-grid"></div>
 
         <div id="modal-editar"
-            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
-            <div class="card" style="width: 350px; background: white; padding: 20px;">
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center; padding: 20px;">
+            <div class="card" style="background: white; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
                 <h3>Editar Produto</h3>
                 <form id="form-editar-produto">
                     <input type="hidden" id="edit-id">
                     <input type="text" id="edit-nome" placeholder="Nome" required
-                        style="width:100%; margin-bottom:10px;">
+                        style="width:100%; margin-bottom:10px; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
                     <input type="number" id="edit-preco" placeholder="Preço" required
-                        style="width:100%; margin-bottom:10px;">
+                        style="width:100%; margin-bottom:10px; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
                     <input type="number" id="edit-qtd" placeholder="Quantidade" required
-                        style="width:100%; margin-bottom:10px;">
+                        style="width:100%; margin-bottom:10px; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
                     <input type="text" id="edit-imagem" placeholder="URL Imagem" required
-                        style="width:100%; margin-bottom:10px;">
-                    <button type="submit" class="btn">Salvar</button>
-                    <button type="button" class="btn danger"
-                        onclick="document.getElementById('modal-editar').style.display='none'">Cancelar</button>
+                        style="width:100%; margin-bottom:10px; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn" style="flex: 1;">Salvar</button>
+                        <button type="button" class="btn danger" style="flex: 1;"
+                            onclick="document.getElementById('modal-editar').style.display='none'">Cancelar</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -71,7 +108,6 @@
             const lista = document.getElementById("lista-produtos");
             const modal = document.getElementById("modal-editar");
 
-            // LISTAGEM COM EDITAR
             onValue(ref(rtdb, "produtos"), (snapshot) => {
                 lista.innerHTML = "";
                 snapshot.forEach((item) => {
@@ -79,12 +115,14 @@
                     const id = item.key;
                     lista.innerHTML += `
                     <div class="card">
-                        <img src="${p.imagem}">
+                        <img src="${p.imagem}" style="width:100%; height:150px; object-fit:cover; border-radius:8px;">
                         <h3>${p.nome}</h3>
                         <p>R$ ${p.preco}</p>
                         <p>Stock: ${p.quantidade}</p>
-                        <button class="btn" onclick='abrirEditor("${id}", ${JSON.stringify(p).replace(/'/g, "&apos;")})'>Editar</button>
-                        <button class="btn danger" onclick="deletar('${id}')">Excluir</button>
+                        <div style="display:grid; gap:5px; margin-top:10px;">
+                            <button class="btn" onclick='abrirEditor("${id}", ${JSON.stringify(p).replace(/'/g, "&apos;")})'>Editar</button>
+                            <button class="btn danger" onclick="deletar('${id}')">Excluir</button>
+                        </div>
                     </div>`;
                 });
             });
