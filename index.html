@@ -3,15 +3,78 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GERS STORE</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="theme-color" content="#064e3b">
+    <meta name="theme-color" content="#0d6efd">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0d6efd">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3081/3081840.png">
+    
+    <style>
+        /* Ajustes finos de responsividade que complementam seu style.css */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
+        .container {
+            padding: 15px; /* Menor respiro em telas pequenas */
+        }
+
+        h1, h2 {
+            margin: 20px 0;
+            font-size: 1.5rem;
+        }
+
+        /* Estilização do Carrinho para ficar mais limpo em mobile */
+        #carrinho {
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .item-carrinho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .item-carrinho:last-child {
+            border-bottom: none;
+        }
+
+        #total {
+            text-align: right;
+            padding: 10px 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .btn-finalizar {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* Melhoria visual para os cards em telas muito pequenas */
+        @media (max-width: 400px) {
+            .product-grid {
+                grid-template-columns: 1fr; /* Coluna única em celulares muito estreitos */
+            }
+            
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
 </head>
 
 <body>
@@ -25,11 +88,15 @@
         <h1>Produtos</h1>
         <div id="vitrine-produtos" class="product-grid"></div>
 
-        <h2>🛒 Carrinho</h2>
-        <div id="carrinho"></div>
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #ddd;">
+
+        <h2>🛒 Seu Carrinho</h2>
+        <div id="carrinho">
+            </div>
+        
         <h3 id="total">Total: R$ 0.00</h3>
 
-        <button class="btn" onclick="finalizarCompra()">
+        <button class="btn btn-finalizar" onclick="finalizarCompra()">
             Finalizar compra no WhatsApp
         </button>
     </main>
@@ -44,7 +111,7 @@
 
         let carrinho = [];
 
-        // 📦 LISTAR PRODUTOS
+        // 📦 LISTAR PRODUTOS (Lógica mantida conforme solicitado)
         onValue(ref(rtdb, "produtos"), (snapshot) => {
             vitrine.innerHTML = "";
             snapshot.forEach((item) => {
@@ -54,7 +121,7 @@
 
                 vitrine.innerHTML += `
                 <div class="card">
-                    <img src="${produto.imagem}">
+                    <img src="${produto.imagem}" alt="${produto.nome}">
                     <h3>${produto.nome}</h3>
                     <p>R$ ${produto.preco.toFixed(2)}</p>
                     <p style="font-size: 13px; color: #666;">Disponível: <b>${produto.quantidade}</b></p>
@@ -79,15 +146,16 @@
             atualizarCarrinho();
         };
 
+        // Função de atualizar carrinho com HTML levemente melhorado para mobile
         function atualizarCarrinho() {
             carrinhoDiv.innerHTML = "";
             let total = 0;
             carrinho.forEach((item, index) => {
                 total += item.preco;
                 carrinhoDiv.innerHTML += `
-                <div>
-                    ${item.nome} - R$ ${item.preco.toFixed(2)}
-                    <button onclick="removerItem(${index})">❌</button>
+                <div class="item-carrinho">
+                    <span>${item.nome} - R$ ${item.preco.toFixed(2)}</span>
+                    <button class="btn danger" style="padding: 2px 8px;" onclick="removerItem(${index})">❌</button>
                 </div>
             `;
             });
